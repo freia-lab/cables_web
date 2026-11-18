@@ -1,0 +1,36 @@
+<?php include ("auth_inc/cableNewAuth_Inc.phtml"); ?>
+
+<HEAD>
+<TITLE>Cable Database Edit</TITLE>
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+<?php
+$id = $_POST['id'];
+$type = $_POST['type'];
+$loc1 = $_POST['loc1'];
+$equip1 = $_POST['equip1'];
+$con1 = $_POST['con1'];
+$loc2 = $_POST['loc2'];
+$equip2 = $_POST['equip2'];
+$con2 = $_POST['con2'];
+$note = $_POST['note'];
+$userid = $_SERVER['PHP_AUTH_USER'];
+
+	$tablename = "cables";
+	$query = "UPDATE $tablename SET type=\"$type\",";
+    $query = "$query con1=\"$con1\", equip1=\"$equip1\", loc1=\"$loc1\",";
+	$query = "$query con2=\"$con2\", equip2=\"$equip2\", loc2=\"$loc2\","; 
+	$query = "$query note=\"$note\",";
+	$query = "$query time=NOW(), userid=\"$userid\"";
+    $query = "$query WHERE nr = $id";
+
+	/*echo "<p>$query<p>";*/
+
+	$result = mysqli_query($sock, $query);
+	if ($result == false)	{
+		echo mysqli_errno($sock).":".mysqli_error($sock)."<BR>";
+		return;
+	}
+	echo "<CENTER><B>Record updated successfully</B></CENTER>";
+?>
+</BODY>

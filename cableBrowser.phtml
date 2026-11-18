@@ -1,0 +1,106 @@
+<?php
+	$tablename = "cables";
+	$proj = $_POST['proj'];
+	$to_nr = $_POST['to_nr'];
+	$from_nr = $_POST['from_nr'];
+	$type = $_POST['type'];
+	$loc1 = $_POST['loc1'];
+	$equip1 = $_POST['equip1'];
+	$loc2 = $_POST['loc2'];
+	$equip2 = $_POST['equip2'];
+	if (array_key_exists('con1', $_POST)) {
+	   $con1 = $_POST['con1'];
+	} else {
+	  $con1 = "";
+	}
+	if (array_key_exists('con2', $_POST)) {
+	   $con2 = $_POST['con2'];
+	} else {
+	  $con2 = "";
+	}
+	$note = $_POST['note'];
+	$edit = $_POST['edit'];
+	if ( $proj != "" ) 	{
+		$start = ((int) $proj * 1000) + (int) $from_nr;
+		$end = ((int) $proj * 1000) + (int) $to_nr;
+		$query = "select nr";
+		$query = "$query $type $loc1 $equip1 $con1 $loc2 $equip2 $con2 $note";
+		$query = "$query from cables where nr >= ";
+		$query = "$query $start and nr <=  $end";
+		$query = "$query order by nr";
+		/*echo "<p>$query<p>";*/
+
+		/* the following line was used on the old version with authentication for all pages*/
+		/*$result = mysqli_query($sock, $query);*/
+
+		$result = mysqli_query($sock, $query);
+		if ($result == false)	{
+			echo mysqli_errno($sock).":".mysqli_error($sock)."<BR>";
+			return;
+		}
+		echo "<FORM  NAME=browser METHOD=POST>";
+		echo "<input name=id type=hidden>";
+
+		echo "<TABLE BORDER=3 CELLSPACING=2 CELLPADDING=2 WIDTH=\"80%\">";
+		echo "<CAPTION><H3>Cables $proj</H3></CAPTION>";
+  		echo "<TR><TH>Nr";
+		$nColumn = 0;
+		if ($type != "")	{
+		   	echo "<TH>Type";
+			$nColumn = $nColumn + 1;
+		}
+		if ($loc1 != "")	{
+			echo "<TH>Location-1";
+			$nColumn = $nColumn + 1;
+		}
+		if ($equip1 != "")	{
+			echo "<TH>Equipment-1";
+			$nColumn = $nColumn + 1;
+		}
+		if ($con1 != "")	{
+			echo "<TH>Connector-1";
+			$nColumn = $nColumn + 1;
+		}
+		if ($loc2 != "")	{
+			echo "<TH>Location-2";
+			$nColumn = $nColumn + 1;
+		}
+		if ($equip2 != "")	{
+			echo "<TH>Equipment-2";
+			$nColumn = $nColumn + 1;
+		}
+		if ($con2 != "")	{
+			echo "<TH>Connector-2";
+			$nColumn = $nColumn + 1;
+		}
+		if ($note != "")	{
+			echo "<TH>Note";
+			$nColumn = $nColumn + 1;
+		}
+
+ 		$row = mysqli_fetch_row($result);
+		
+		while (true)	{
+			if ($row == false)	{
+				break;
+			}
+			$nr = (int) $row[0] - 1000 * (int) ($row[0] / 1000);
+  			printf("<TR><TD>%03d", $nr);
+			for ($i = 1; $i <= $nColumn; $i++)	{
+				printf("<TD>%s&nbsp", $row[$i]);
+			} 
+ 			if ($edit == 1)	{
+				echo "<TD><input type=button value=Edit onClick=editForm($row[0])>";
+				printf("<TD><input type=button value=Delete onClick=deleteForm($row[0])>");
+			}
+ 			$row = mysqli_fetch_row($result);
+		}
+		echo "</TABLE></FORM>";
+		mysqli_free_result($result);
+	}
+	if ($edit == 0) {
+	   echo "<br><FORM>";
+	   echo '<input type="button" value="Print this cable list" onClick="window.print()">';
+	   echo "</FORM><BR>";
+	}
+?>

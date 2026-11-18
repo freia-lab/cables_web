@@ -1,0 +1,18 @@
+<!-- dont include athentication for read only access -->
+<?php
+	$host = 'localhost';
+	$user = 'datalog';
+	$password = "";
+
+  	$sock = @mysqli_connect( "$host", "$user", "$password" , "cntrldoc") or 
+           die( "Unable to connect to the database server (user@host: $user@$host) at this time" );
+?>
+<HEAD>
+<title>The Cable Database Browser</title>
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+
+<?php
+	include ("cableBrowser.phtml");
+?>
+</BODY>

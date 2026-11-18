@@ -1,0 +1,24 @@
+<?php include ("auth_inc/cableNewAuth_Inc.phtml"); ?>
+
+<HEAD>
+<TITLE>Cable Database Delete</TITLE>
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+
+
+<?php
+$id = $_POST['id'];
+	$tablename = "cables";
+	$query = "DELETE FROM $tablename WHERE nr = $id";
+
+	/*echo "<p>$query<p>";*/
+
+	$result = mysqli_query($sock, $query);
+	if ($result == false)	{
+		echo mysqli_errno($sock).":".mysqli_error($sock)."<BR>";
+		return;
+	}
+	echo "<CENTER>Record successfully deleted</CENTER>";
+?>
+
+</BODY>

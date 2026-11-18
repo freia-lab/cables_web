@@ -1,0 +1,176 @@
+<?php include ("auth_inc/cableNewAuth_Inc.phtml"); ?>
+
+<HEAD>
+<TITLE>Cable Database New</TITLE>
+<SCRIPT LANGUAGE="JavaScript1.1">
+
+function isblank(s)	{
+
+	if (s == null || s == "")	{
+		return true;
+	}
+	for (var i=0; i<s.length; i++)	{
+		var c = s.charAt(i);
+		if ((c != ' ') && (c != '\n') && (c != '\t'))
+			return false;
+	}
+	return true;
+}
+
+function checkInsertForm() 	{
+	var nr, nblank;
+
+	if (isblank(document.insert.nr.value))	{
+		alert("Cable nr field can not be empty !!!");
+		return false;
+	}
+
+	nr = parseInt(document.insert.nr.value);
+	if (isNaN(nr))	{
+		alert("Bad cable nr !!!");
+		return false;
+	}
+	if (nr < 0 || nr > 999)	{
+		alert("Cable nr must be in range 0-999");
+		return false;
+	}
+	nblank = 0; 
+	if (isblank(document.insert.type.value))	
+		nblank++;
+	if (isblank(document.insert.con1.value))	
+		nblank++;
+	if (isblank(document.insert.equip1.value))	
+		nblank++;
+	if (isblank(document.insert.loc1.value))	
+		nblank++;
+
+	if (isblank(document.insert.con2.value))	
+		nblank++;
+	if (isblank(document.insert.equip2.value))	
+		nblank++;
+	if (isblank(document.insert.loc2.value))	
+		nblank++;
+
+	if (isblank(document.insert.note.value))	
+		nblank++;
+
+	if (nblank == 8)	{
+		
+		alert("All cable description fields empty !!!\nAt least one of the description fields must be non-empty.");
+		return false;
+	}
+	return true;
+
+}
+
+function copyForm()	{
+	var f = document.insert;
+
+	for (i=0; i<f.length; i++)	{
+		if (f.elements[i].type == "text")	
+			top.window[0].copyPasteValues[f.elements[i].name] = f.elements[i].value;
+	}
+}
+
+function pasteForm()	{
+	var f = document.insert;
+
+	for (i=0; i<f.length; i++)	{
+		if (f.elements[i].type == "text" && f.elements[i].name != "nr")	
+			f.elements[i].value = top.window[0].copyPasteValues[f.elements[i].name];
+	}
+}
+
+function clearForm()	{
+	var f = document.insert;
+
+	for (i=0; i<f.length; i++)	{
+		if (f.elements[i].type == "text")	
+			f.elements[i].value = "";
+	}
+}
+
+function insertForm()	{
+	var f = document.insert;
+
+	if (checkInsertForm())
+		f.submit();
+}
+
+function cancelForm()	{
+
+	self.history.back();
+}
+
+</SCRIPT>
+	<FORM NAME=insertDummy METHOD=POST>
+	<input type=hidden name=proj>
+	</FORM>
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+<?php	
+$proj = $_POST['proj'];
+$from_nr = $_POST['from_nr'];
+$to_nr = $_POST['to_nr'];
+$type = $_POST['type'];
+$loc1 = $_POST['loc1'];
+$equip1 = $_POST['equip1'];
+$con1 = $_POST['con1'];
+$loc2 = $_POST['loc2'];
+$equip2 = $_POST['equip2'];
+$con2 = $_POST['con2'];
+$note = $_POST['note'];
+        $dbname = "cntrldoc"; 
+	$tablename = "cables";
+	$result = mysqli_query($sock, "SELECT * from cables limit 1");
+	if ($result == false)	{
+		echo mysqli_errno($sock).":".mysqli_error($sock)."<BR>";
+		return;
+	}
+	$fields = mysqli_num_fields($result);
+	for ($i = 0; $i<$fields; $i++)	{
+	    	$finfo = mysqli_fetch_field_direct($result, $i);
+		$fieldlen[$i] = $finfo->length;
+	}
+	echo "<FORM NAME=insert ACTION=cableInsert.phtml METHOD=POST>";
+
+	echo "<input type=button onClick=cancelForm() value=Cancel>";
+    echo "<input type=button onClick=copyForm() value=Copy>"; 
+    echo "<input type=button onClick=pasteForm() value=Paste>"; 
+    echo "<input type=button onClick=clearForm() value=Clear>"; 
+	echo "<input type=button onClick=insertForm() value=Insert>";
+
+    echo "<input type=hidden name=proj value=$proj>"; 
+
+ 	echo "<TABLE>";
+	printf("<CAPTION><H3> Cable $proj- xxx</H3></CAPTION>");
+    echo "<TR><TD>Nr:";
+	echo "<TD><B>$proj-</B><input size=3 type=text name=nr>"; 
+
+	echo "<TR><TD>Type:";
+   	echo "<TD><input size=$fieldlen[1] type=text name=type>";
+
+ 	echo "<TR><TD>Connector-1:";
+   	echo "<TD><input size=$fieldlen[2] type=text name=con1>";
+	echo "<TR><TD>Equipment-1:";
+   	echo "<TD><input size=$fieldlen[3] type=text name=equip1>";
+	echo "<TR><TD>Location-1:";
+    echo "<TD><input size=$fieldlen[4] type=text name=loc1>";
+ 
+	echo "<TR><TD>Connector-2:";
+    echo "<TD><input size=$fieldlen[5] type=text name=con2>";
+	echo "<TR><TD>Equipment-2:";
+   	echo "<TD><input size=$fieldlen[6] type=text name=equip2>";
+	echo "<TR><TD>Location-2:";
+    echo "<TD><input size=$fieldlen[7] type=text name=loc2>";
+ 
+
+	echo "<TR><TD>Note:";
+    echo "<TD><input size=$fieldlen[8] type=textarea name=note>";
+	echo "</TABLE>";
+
+    echo "</FORM>";
+
+?>
+
+</BODY>

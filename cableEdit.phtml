@@ -1,0 +1,152 @@
+<?php include ("auth_inc/cableNewAuth_Inc.phtml"); ?>
+
+<HEAD>
+<TITLE>Cable Database Edit</TITLE>
+<SCRIPT LANGUAGE="JavaScript1.1">
+
+function isblank(s)	{
+
+	if (s == null || s == "")	{
+		return true;
+	}
+	for (var i=0; i<s.length; i++)	{
+		var c = s.charAt(i);
+		if ((c != ' ') && (c != '\n') && (c != '\t'))
+			return false;
+	}
+	return true;
+}
+
+function checkUpdateForm() 	{
+	var nr, nblank;
+
+	nblank = 0; 
+	if (isblank(document.update.type.value))	
+		nblank++;
+
+	if (isblank(document.update.con1.value))	
+		nblank++;
+	if (isblank(document.update.equip1.value))	
+		nblank++;
+	if (isblank(document.update.loc1.value))	
+		nblank++;
+
+	if (isblank(document.update.con2.value))	
+		nblank++;
+	if (isblank(document.update.equip2.value))	
+		nblank++;
+	if (isblank(document.update.loc2.value))	
+		nblank++;
+
+	if (isblank(document.update.note.value))	
+		nblank++;
+
+	if (nblank == 8)	{
+		alert("All cable description fields empty !!!\nAt least one of the description fields must be non-empty.");
+		return false;
+	}
+	return true;
+}
+
+function copyForm()	{
+	var f = document.update;
+
+	for (i=0; i<f.length; i++)	{
+		if (f.elements[i].type == "text")	
+			top.window[0].copyPasteValues[f.elements[i].name] = f.elements[i].value;
+	}
+}
+
+function pasteForm()	{
+	var f = document.update;
+
+	for (i=0; i<f.length; i++)	{
+		if (f.elements[i].type == "text")	
+			f.elements[i].value = top.window[0].copyPasteValues[f.elements[i].name];
+	}
+}
+
+function updateForm()	{
+	var f = document.update;
+
+	if(checkUpdateForm())
+		f.submit();
+}
+
+function clearForm()	{
+	var f = document.update;
+
+	for (i=0; i<f.length; i++)	{
+		if (f.elements[i].type == "text")	
+			f.elements[i].value = "";
+	}
+}
+
+function cancelForm()	{
+
+	self.history.back();
+}
+
+</SCRIPT>
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+<?php
+$id = $_POST['id'];
+
+	$tablename = "cables";
+	$query = "SELECT type, con1, equip1, loc1, con2, equip2, loc2, note, userid, time from $tablename"; 
+    $query = "$query WHERE nr = $id";
+
+	/*echo "<p>$query<p>";*/
+
+	$result = mysqli_query($sock, $query);
+	if ($result == false)	{
+		echo mysqli_errno($sock).":".mysqli_error($sock)."<BR>";
+		return;
+	}
+	$fields = mysqli_num_fields($result);
+	for ($i = 0; $i<$fields; $i++)	{
+	    	$finfo = mysqli_fetch_field_direct($result, $i);
+		$fieldlen[$i] = $finfo->length;
+	}
+ 	$row = mysqli_fetch_row($result);
+	$nr = (int) $id - 1000 * (int) ($id / 1000);
+	
+	echo "<FORM NAME=update ACTION=cableUpdate.phtml METHOD=POST>";
+
+ 	echo "<input type=button onClick=cancelForm() value=Cancel >";
+    echo "<input type=button onClick=copyForm() value=Copy>"; 
+    echo "<input type=button onClick=pasteForm() value=Paste>"; 
+    echo "<input type=button onClick=clearForm() value=Clear>"; 
+	echo "<input type=button onClick=updateForm() value=Update>";
+
+    echo "<input type=hidden name=id value=$id>";
+
+ 	echo "<TABLE>";
+	printf("<CAPTION><H3> Cable %02d-%03d </H3></CAPTION>", $id/1000, $nr);
+
+	echo "<TR><TD>Type:";
+    echo "<TD><input size=$fieldlen[0] type=text name=type value=\"$row[0]\">";
+
+  	echo "<TR><TD>Connector-1:";
+	echo "<TD><input size=$fieldlen[1] type=text name=con1 value=\"$row[1]\">";
+ 	echo "<TR><TD>Equipment-1:";
+   	echo "<TD><input size=$fieldlen[2] type=text name=equip1 value=\"$row[2]\">";
+	echo "<TR><TD>Location-1:";
+    echo "<TD><input size=$fieldlen[3] type=text name=loc1 value=\"$row[3]\">";
+
+	echo "<TR><TD>Connector-2:";
+    echo "<TD><input size=$fieldlen[4] type=text name=con2 value=\"$row[4]\">"; 
+	echo "<TR><TD>Equipment-2:";
+   	echo "<TD><input size=$fieldlen[5] type=text name=equip2 value=\"$row[5]\">";
+	echo "<TR><TD>Location-2:";
+    echo "<TD><input size=$fieldlen[6] type=text name=loc2 value=\"$row[6]\">";
+
+	echo "<TR><TD>Note:";
+    echo "<TD><input size=$fieldlen[7] type=text name=note value=\"$row[7]\">";
+	echo "</TABLE>";
+	echo "</FORM>";	
+	echo "<b>Last changed by:  $row[8] on $row[9]</b>";
+	mysqli_free_result($res);
+?>
+</BODY>

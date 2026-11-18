@@ -1,0 +1,46 @@
+<?php include ("auth_inc/cableNewAuth_Inc.phtml"); ?>
+
+<HEAD>
+<TITLE>Cable Database Insert</TITLE>
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+<?php
+$proj = $_POST['proj'];
+$nr = $_POST['nr'];
+$type = $_POST['type'];
+$loc1 = $_POST['loc1'];
+$equip1 = $_POST['equip1'];
+$con1 = $_POST['con1'];
+$loc2 = $_POST['loc2'];
+$equip2 = $_POST['equip2'];
+$con2 = $_POST['con2'];
+$note = $_POST['note'];
+$edit = $_POST['edit'];
+$user = $_SERVER['PHP_AUTH_USER'];
+
+	$tablename = "cables";
+	$id = 1000*$proj + $nr;
+	$query = "INSERT INTO $tablename ( nr, type, con1, equip1, loc1, con2, equip2, loc2, note, time, userid )";
+    $query = "$query VALUES ( \"$id\", \"$type\", \"$con1\", \"$equip1\", \"$loc1\", \"$con2\", \"$equip2\", \"$loc2\", \"$note\" , NOW(), \" $user \")";
+
+	/*echo "<p>$query<p>";*/
+
+	$result = mysqli_query($sock, $query);
+	if ($result == false)	{
+		if (mysqli_errno($sock) == 1062)	{
+			printf("<CENTER><B>Cable number %02d-%03d already exist</B></CENTER>", $proj, $nr);
+		} else	{
+			echo "<CENTER><B>";
+			echo mysqli_errno($sock).":".mysqli_error($sock);
+			echo "</CENTER></B>";
+		}
+	} else	{
+		echo "<CENTER><B>Record inserted successfully</B></CENTER>";
+	}
+
+//	echo "<FORM ACTION=cableNew.phtml METHOD=POST>";
+//	echo "<CENTER><input name=cmd type=submit value=\"Insert next\"></CENTER>";
+//	echo "<input name=proj type=hidden value=$proj >";
+//	echo "</FORM>";
+?>
+</BODY>

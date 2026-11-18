@@ -1,0 +1,76 @@
+<HEAD>
+<TITLE>Cable Datebase browser control panel</TITLE>
+
+<!------------------------------------------>
+<SCRIPT LANGUAGE="JavaScript1.1">
+
+function submitFrame(page)	{
+	var f = document.select;
+	f.action =  page;
+	f.submit();
+}
+
+// Create a array object to hold values for the copy & paste commands
+self.copyPasteValues = new Object();
+
+</SCRIPT>
+
+<!------------------------------------------->
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+<img src="kabeldragare.jpg" align="right">
+<FORM NAME=select METHOD=POST TARGET="bottomFrame">
+<TABLE border cellpadding=1 height=10%>
+ <TR>
+   <TH>Section</TH>
+   <TH>Range</TH>
+   <TH COLSPAN=2>Display fields</TH>
+   <TH>Action</TH>
+<TR>
+   <TD valign=top>
+     <SELECT name=proj>
+       <OPTION value="01">01 HNOSS
+       <OPTION value="02">02 RF system
+       <OPTION value="03">03 LLRF
+       <OPTION value="04">04 Data aquisition
+       <OPTION value="05">05 LHe system
+       <OPTION value="06">06 Vacuum
+       <OPTION value="07">07 Control system
+       <OPTION value="08">08 Cooling water
+       <OPTION value="09">09 Radiation protection
+       <OPTION value="10">10 
+       <OPTION value="11">11 Cryomodule
+       <OPTION value="12">12 Laser lab
+     </SELECT>
+   </TD>
+   <TD valign=top>
+      <input size=3 type=text name=from_nr value="0"> -
+      <input size=3 type=text name=to_nr value="999"><BR> 
+   </TD>
+   <TD valign=top>
+      <input type=checkbox name=type value=", type" checked> Type<HR>
+	  From<BR>
+      <input type=checkbox name=con1  value=", con1"> Connector-1<BR>
+      <input type=checkbox name=equip1  value=", equip1" checked> Equipment-1<BR>
+      <input type=checkbox name=loc1  value=", loc1" checked> Location-1
+    </TD>
+    <TD>
+      <input type= checkbox name=note value=", note" checked> Note<HR>
+      To<BR>
+      <input type=checkbox name=con2  value=", con2"> Connector-2<BR>
+      <input type=checkbox name=equip2  value=", equip2" checked> Equipment-2<BR>
+      <input type=checkbox name=loc2  value=", loc2" checked> Location-2
+       
+   </TD>
+   <TD valign=top>
+		<input type=hidden name=edit  value=""><BR>
+		<input type=button value="      List cables     " onClick=document.select.edit.value=0;submitFrame("cableBrowser-ro.phtml")><BR>
+   		<input type=button value="List & edit cables    " onClick=document.select.edit.value=1;submitFrame("cableBrowser-rw.phtml")><BR>
+<!--   		<input type=button value="      New cable       " onClick=document.select.edit.value=0;submitFrame("https://"+location.hostname+"/htdocss/php/cables/cableNew.phtml")>
+-->
+   		<input type=button value="      New cable       " onClick=document.select.edit.value=0;submitFrame("cableNew.phtml")>
+   </TD>
+</TABLE>
+<HR>
+</FORM>
+</BODY>

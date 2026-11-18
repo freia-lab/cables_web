@@ -1,0 +1,35 @@
+<!-- include athentication for read/write access -->
+<?php
+	include ("auth_inc/cableNewAuth_Inc.phtml");
+?>
+<HEAD>
+<title>The Cable Database Browser</title>
+<SCRIPT LANGUAGE="JavaScript1.1">
+
+
+function editForm(nr)	{
+	var f = document.browser;
+
+	f.id.value = nr;
+	f.action = "cableEdit.phtml";
+	f.submit();	
+}
+
+function deleteForm(nr)	{
+	var f = document.browser;
+
+	if (confirm("Are you sure ?"))	{
+		f.id.value = nr;
+		f.action = "cableDelete.phtml";
+		f.submit();
+	}
+}
+
+</SCRIPT>
+</HEAD>
+<BODY BGCOLOR=#C0C0C0>
+
+<?php
+	include ("cableBrowser.phtml");
+?>
+</BODY>
